@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react'
+import axios from 'axios'
+export default function App() {
+  const [file, setFile] = useState()
+  const [description, setDescription] = useState("")
 
-function App() {
+  const submit = async event => {
+    event.preventDefault()
+
+    // Send the file and description to the server
+    const formData = new FormData()
+    formData.append("image", file)
+    formData.append("description", description)
+
+    const result = await axios.post('/api/images', formData, { headers: {'Content-Type': 'multipart/form-data'}})
+    console.log(result)
+
+
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={submit}>
+        <input
+          filename={file} 
+          onChange={e => setFile(e.target.files[0])} 
+          type="file" 
+          accept="image/*"
+        ></input>
+        <input
+          onChange={e => setDescription(e.target.value)} 
+          type="text"
+        ></input>
+        <button type="submit">Submit</button>
+      </form>
     </div>
-  );
+  )
 }
-
-export default App;
